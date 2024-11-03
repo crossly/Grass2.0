@@ -126,15 +126,6 @@ async def main():
     )
     args = arg.parse_args()
     os.system("cls" if os.name == "nt" else "clear")
-    print(
-        f"""
-
-    {red}  本脚本由推特用户雪糕战神@Hy78516012开源使用 无任何收费！！！
-    {white}Gihub    : {green}github.com/Gzgod
-    {white}我的推特 ：{green}雪糕战神@Hy78516012
-    {green}Get some grass !
-          """
-    )
     token = open("token.txt", "r").read()
     userid = open("userid.txt", "r").read()
     if len(userid) <= 0:
