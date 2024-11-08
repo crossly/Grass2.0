@@ -81,8 +81,8 @@ class Grass:
                             "version": "4.28.2",
                         },
                     }
-                    await wss.send_json(auth_data)
-                    self.log("Successfully connected to the server!")
+                    auth_result = await wss.send_json(auth_data)
+                    self.log(f"Successfully connected to the server! Auth result: {auth_result}")
                     retry = 1
                     while True:
                         ping_data = {
@@ -91,11 +91,11 @@ class Grass:
                             "action": "PING",
                             "data": {},
                         }
-                        await wss.send_json(ping_data)
-                        self.log("Sending ping to the server ! " + str(ping_data))
+                        ping_result = await wss.send_json(ping_data)
+                        self.log("Sending ping to the server ! " + str(ping_data) + " Result: " + str(ping_result))
                         pong_data = {"id": "F3X", "origin_action": "PONG"}
-                        await wss.send_json(pong_data)
-                        self.log("Sending pong to the server ! " + str(pong_data))
+                        pong_result = await wss.send_json(pong_data)
+                        self.log("Sending pong to the server ! " + str(pong_data) + " Result: " + str(pong_result))
                         await countdown(120)
             except KeyboardInterrupt:
                 await self.ses.close()
