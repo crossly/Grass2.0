@@ -34,7 +34,7 @@ class Grass:
             return await result.text()
 
     async def start(self):
-        max_retry = 10
+        max_retry = 20
         retry = 1
         proxy = self.proxy
         if proxy is None:
