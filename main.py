@@ -21,6 +21,7 @@ class Grass:
         self.userid = userid
         self.proxy = proxy
         self.ses = aiohttp.ClientSession()
+        self.log("Initialization successful!")
 
     def log(self, msg):
         now = datetime.now(tz=timezone.utc).isoformat(" ").split(".")[0]
@@ -33,7 +34,7 @@ class Grass:
             return await result.text()
 
     async def start(self):
-        max_retry = 10
+        max_retry = 20
         retry = 1
         proxy = self.proxy
         if proxy is None:
@@ -41,20 +42,19 @@ class Grass:
         browser_id = uuid.uuid5(uuid.NAMESPACE_URL, proxy)
         useragent = UserAgent().random
         headers = {
-            "Host": "proxy2.wynd.network:4650",
-            "Connection": "Upgrade",
-            "Pragma": "no-cache",
-            "Cache-Control": "no-cache",
-            "User-Agent": useragent,
-            "Upgrade": "websocket",
-            "Origin": "chrome-extension://lkbnfiajjmbhnfledhphioinpickokdi",
-            "Sec-WebSocket-Version": "13",
-            "Accept-Language": "en-US,en;q=0.9,id;q=0.8",
+            'User-Agent': useragent,
+            'Pragma': 'no-cache',
+            'Accept-Language': 'uk-UA,uk;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Cache-Control': 'no-cache',
+            'OS': 'Windows',
+            'Platform': 'Desktop',
+            'Browser': 'Mozilla'
         }
+        self.log("Starting to connect to the server!")
         while True:
             try:
                 if retry >= max_retry:
-                    self.log(f"{yellow}max retrying reacted, skip the proxy !")
+                    self.log("max retrying reacted, skip the proxy !")
                     await self.ses.close()
                     return
                 async with self.ses.ws_connect(
@@ -67,7 +67,7 @@ class Grass:
                     res = await wss.receive_json()
                     auth_id = res.get("id")
                     if auth_id is None:
-                        self.log(f"{red}auth id is None")
+                        self.log("auth id is None")
                         return None
                     auth_data = {
                         "id": auth_id,
@@ -79,11 +79,10 @@ class Grass:
                             "timestamp": int(datetime.now().timestamp()),
                             "device_type": "desktop",
                             "version": "4.28.2",
-                            # "extension_id": "lkbnfiajjmbhnfledhphioinpickokdi",
                         },
                     }
-                    await wss.send_json(auth_data)
-                    self.log(f"{green}成功连接 {white}到服务器!")
+                    auth_result = await wss.send_json(auth_data)
+                    self.log(f"Successfully connected to the server! Auth result: {auth_result}")
                     retry = 1
                     while True:
                         ping_data = {
@@ -92,18 +91,17 @@ class Grass:
                             "action": "PING",
                             "data": {},
                         }
-                        await wss.send_json(ping_data)
-                        self.log(f"{white}发送 {green}ping {white}到服务器 !")
+                        ping_result = await wss.send_json(ping_data)
+                        self.log("Sending ping to the server ! " + str(ping_data) + " Result: " + str(ping_result))
                         pong_data = {"id": "F3X", "origin_action": "PONG"}
-                        await wss.send_json(pong_data)
-                        self.log(f"{white}发送 {magenta}pong {white}到服务器 !")
-                        # you can edit the countdown in code below
+                        pong_result = await wss.send_json(pong_data)
+                        self.log("Sending pong to the server ! " + str(pong_data) + " Result: " + str(pong_result))
                         await countdown(120)
             except KeyboardInterrupt:
                 await self.ses.close()
                 exit()
             except Exception as e:
-                self.log(f"{red}error : {white}{e}")
+                self.log("error : " + str(e))
                 retry += 1
                 continue
 
@@ -129,10 +127,10 @@ async def main():
     token = open("token.txt", "r").read()
     userid = open("userid.txt", "r").read()
     if len(userid) <= 0:
-        print(f"{red}错误 : {white}请先输入您的用户ID!")
+        print("Error: Please enter your user ID first!")
         exit()
     if not os.path.exists(args.proxy):
-        print(f"{red}{args.proxy} 未找到，请确保 {args.proxy} 可用！")
+        print(args.proxy + " not found, please ensure " + args.proxy + " is available!")
         exit()
     proxies = open(args.proxy, "r").read().splitlines()
     if len(proxies) <= 0:
