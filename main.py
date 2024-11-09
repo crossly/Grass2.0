@@ -77,9 +77,9 @@ class Grass:
                             "user_id": self.userid,
                             "user_agent": useragent,
                             "timestamp": int(datetime.now().timestamp()),
-                            "device_type": "extension",
-                            "version": "4.26.2",
-                            "extension_id": "lkbnfiajjmbhnfledhphioinpickokdi",
+                            "device_type": "desktop",
+                            "version": "4.28.2",
+                            # "extension_id": "lkbnfiajjmbhnfledhphioinpickokdi",
                         },
                     }
                     await wss.send_json(auth_data)
