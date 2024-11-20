@@ -65,7 +65,6 @@ async def connect_to_wss(user_id):
         except Exception as e:
             logger.error(e)
 
-
 async def main():
     user_id = open("userid.txt", "r").read()
     if len(user_id) <= 0:
@@ -74,4 +73,5 @@ async def main():
     await connect_to_wss(user_id)
 
 if __name__ == '__main__':
+    logger.add("/var/log/grass.out.log", rotation="10 MB")
     asyncio.run(main())
