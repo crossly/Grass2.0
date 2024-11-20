@@ -66,7 +66,7 @@ async def connect_to_wss(user_id):
             logger.error(e)
 
 async def main():
-    user_id = open("userid.txt", "r").read()
+    user_id = open("userid.txt", "r").read().strip()
     if len(user_id) <= 0:
         print("Error: Please enter your user ID first!")
         exit()
