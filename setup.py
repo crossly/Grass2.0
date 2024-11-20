@@ -25,7 +25,7 @@ async def main():
         login_url, headers=headers, json={"username": email, "password": password}
     )
     if res.status_code != 200:
-        print("[x] faile to login,try again later !")
+        print(f"[x] 登录失败,状态码: {res.status_code}, 响应结果: {res.text}, 请重试 !")
         return
     token = res.json().get("result", {}).get("data", {}).get("accessToken")
     userid = res.json().get("result", {}).get("data", {}).get("userId")
